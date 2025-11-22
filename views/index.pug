@@ -1,23 +1,40 @@
-extends layout
+extends layout 
 
 block content
-  h1= title
-  p Welcome to #{title}
-  ol
-  each val in todos
-    li
-      span= val.task + ' - '
-      if val.completed > 0
-        span Completed
-      else
-        pan Not Completed
-      form(method='POST' action='/delete')
-        input(type='hidden', name='id', value=val.id)
-        button(type='submit') Delete
+  .container
+    h1.page-title= title
+    p.subtitle Welcome to #{title}
 
-  hr
-  h2 Add a new task
-  form(method='POST' action='/create')
-    label(for='task') Task:
-    input(type='text', name='task', id='task', required)
-    button(type='submit') Create Task
+    if error
+      p.error-message= error
+
+    h2.section-title Add a new task
+    form.task-form(method='POST', action='/create')
+      label(for='task') Task:
+      input(type='text', name='task', id='task', required, placeholder='Enter a task...')
+      button(type='submit') Create Task
+
+    hr.divider
+
+    h2.section-title Current tasks
+    if todos.length === 0
+      p.empty-text No tasks yet. Add one above to get started!
+    else
+      ol.task-list
+        each val in todos
+          li(class=val.completed > 0 ? 'task completed' : 'task not-completed')
+            .task-main
+              span.description= val.task
+              span.status= val.completed > 0 ? 'Completed' : 'Not Completed'
+
+            .task-actions
+              if !val.completed
+                form.inline-form(method='POST', action='/complete')
+                  input(type='hidden', name='id', value=val.id)
+                  button.btn.btn-complete(type='submit') Mark Completed
+
+              a.edit-link.btn.btn-secondary(href='/edit/' + val.id) Edit
+
+              form.inline-form(method='POST', action='/delete')
+                input(type='hidden', name='id', value=val.id)
+                button.btn.btn-danger(type='submit') Delete

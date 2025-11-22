@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  .container
+    h1.page-title Edit Task
+
+    if error
+      p.error-message= error
+
+    form.task-form(method='POST', action='/edit/' + task.id)
+      label(for='task') Task description:
+      input#task(type='text', name='task', value=task.task, required, placeholder='Update your task...')
+
+      label.checkbox
+        input(type='checkbox', name='completed', checked=task.completed)
+        | Mark as completed
+
+      .button-row
+        button.btn(type='submit') Save Changes
+        a.btn.btn-secondary(href='/') Cancel
